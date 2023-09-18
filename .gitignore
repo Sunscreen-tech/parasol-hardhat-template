@@ -1,0 +1,5 @@
+contracts/cache/*
+contracts/artifacts/*
+*/node_modules/*
+contractInfo.json
+contracts/typechain-types/*

@@ -1,0 +1,27 @@
+{
+  "features": {
+    "git": "os-provided",
+    "github-cli": "latest",
+    "docker-from-docker": "latest"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "lldb.executable": "/usr/bin/lldb",
+        "files.watcherExclude": {
+          "**/build/**": true
+        },
+      },
+      "extensions": [
+        "vadimcn.vscode-lldb",
+        "GitHub.copilot",
+        "juanblanco.solidity",
+        "dbaeumer.vscode-eslint",
+      ]
+    }
+  },
+  "build": { "dockerfile": "Dockerfile" },
+  "postCreateCommand": "chmod +x .devcontainer/postCreate.sh & .devcontainer/postCreate.sh",
+  "remoteUser": "root"
+}
+
