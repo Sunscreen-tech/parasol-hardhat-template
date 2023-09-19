@@ -2,29 +2,30 @@ import { ethers } from "hardhat";
 const hre = require("hardhat");
 const fs = require("fs");
 async function main() {
-  const signers = await ethers.getSigners();
+  const ethProvider = new ethers.JsonRpcProvider(hre.network.config.url);
+  const wallet = new ethers.Wallet(hre.network.config.accounts[0], ethProvider);
 
   //Library deployment
   console.log("Building bytes library");
-  const bytesLib = await ethers.getContractFactory("Bytes", { signer: signers[0] });
+  const bytesLib = await ethers.getContractFactory("Bytes", wallet);
   console.log("Deploying bytes library");
-  const bytesLibInstance = await bytesLib.deploy({gasPrice: 20000000000});
+  const bytesLibInstance = await bytesLib.deploy();
   await bytesLibInstance.waitForDeployment();
   console.log("Bytes Library Address--->" + await bytesLibInstance.getAddress());
 
   console.log("Building FHE library");
-  const fheLib = await ethers.getContractFactory("FHE", { signer: signers[0] });
+  const fheLib = await ethers.getContractFactory("FHE", { signer: wallet });
   console.log("Deploying FHE library");
-  const fheLibInstance = await fheLib.deploy({gasPrice: 20000000000});
+  const fheLibInstance = await fheLib.deploy();
   await fheLibInstance.waitForDeployment();
   console.log("FHE Library Address--->" + await fheLibInstance.getAddress());
 
   // Contract deployment
   console.log("Building contract");
-  const Counter = await ethers.getContractFactory("Counter", {signer: signers[0], libraries: { FHE: await fheLibInstance.getAddress() }  });
+  const Counter = await ethers.getContractFactory("Counter", {signer: wallet, libraries: { FHE: await fheLibInstance.getAddress() }  });
 
   console.log("Deploying contract");
-  const counter = await Counter.deploy(5, {gasPrice: 20000000000});
+  const counter = await Counter.deploy(5);
 
   await counter.waitForDeployment();
   console.log(

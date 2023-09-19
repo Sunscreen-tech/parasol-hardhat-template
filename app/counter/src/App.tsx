@@ -57,8 +57,8 @@ const App = () => {
 
       const context = await SunscreenFHEContext.createForStandardParams();
       const networkKeyBytes = await connectedContract.getPublicKey();
-      const publicKeyBuffer = await SunscreenBuffer.createFromBytes(ethers.getBytes(networkKeyBytes));
-      const keys = await KeySet.initializeFromBuffers(publicKeyBuffer, null);
+      const publicKeyBuffer = await SunscreenBuffer.createFromBytes(ethers.getBytes(networkKeyBytes), context.getRustLibrary());
+      const keys = await KeySet.initializeFromBuffers(context, publicKeyBuffer, null);
 
       const encryptedNumber = await EncryptedUnsigned256.createFromPlain(new BigNumber(setNumber), context, keys);
       setResult("Submitting to mempool...");
@@ -88,7 +88,7 @@ const App = () => {
       setResult("Executing transaction...");
       const publicKeyBuffer = await keys.getPublicKeyAsBuffer();
       const encryptedObject = await connectedContract.getNumberSecretly(ethers.hexlify(publicKeyBuffer.getBytes()));
-      const encryptedObjectAsBuffer = await SunscreenBuffer.createFromBytes(ethers.getBytes(encryptedObject));
+      const encryptedObjectAsBuffer = await SunscreenBuffer.createFromBytes(ethers.getBytes(encryptedObject), context.getRustLibrary());
 
       const encryptedNumber = await EncryptedUnsigned256.createFromEncryptedBuffer(encryptedObjectAsBuffer, context, false, 0, null);
       setResult((await encryptedNumber.decrypt()).toString());
